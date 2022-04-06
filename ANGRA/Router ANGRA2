@@ -1,0 +1,41 @@
+// Configuration from Router 'ANGRA2'
+
+interface FastEthernet0/0
+ no ip address
+ ip helper-address 192.168.11.13
+ duplex auto
+ speed auto
+!
+interface FastEthernet0/0.1
+ encapsulation dot1Q 1 native
+ ip address 172.17.11.1 255.255.255.0
+ ip helper-address 192.168.11.13
+!
+interface FastEthernet0/0.50
+ encapsulation dot1Q 50
+ ip address 172.20.11.1 255.255.255.0
+ ip helper-address 192.168.11.13
+!
+interface FastEthernet0/1
+ ip address 172.18.11.1 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ ip address 192.168.11.14 255.255.255.252
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 100
+ redistribute static 
+ passive-interface FastEthernet0/0
+ passive-interface FastEthernet0/1
+ network 172.17.11.0 0.0.0.255
+ network 172.18.11.0 0.0.0.255
+ network 192.168.11.12 0.0.0.3
+ network 172.20.11.0 0.0.0.255
+ no auto-summary
+!
+ip route 192.168.11.8 255.255.255.252 192.168.11.13
