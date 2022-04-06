@@ -1,0 +1,140 @@
+// Configuration from Router 'PDL1'
+
+ip dhcp excluded-address 10.11.10.1
+ip dhcp excluded-address 10.11.20.1
+ip dhcp excluded-address 10.11.30.1
+ip dhcp excluded-address 10.11.40.1
+ip dhcp excluded-address 10.11.50.1
+!
+ip dhcp pool VLAN10
+ network 10.11.10.0 255.255.255.0
+ default-router 10.11.10.253
+ option 150 ip 10.11.10.2
+ dns-server 8.8.8.8
+ip dhcp pool VLAN20
+ network 10.11.20.0 255.255.255.0
+ default-router 10.11.20.253
+ option 150 ip 10.11.20.2
+ dns-server 8.8.8.8
+ip dhcp pool VLAN30
+ network 10.11.30.0 255.255.255.0
+ default-router 10.11.30.253
+ option 150 ip 10.11.30.2
+ dns-server 8.8.8.8
+ip dhcp pool VLAN40
+ network 10.11.40.0 255.255.255.0
+ default-router 10.11.40.253
+ option 150 ip 192.168.11.2
+ dns-server 8.8.8.8
+ip dhcp pool VLAN50
+ network 10.11.50.0 255.255.255.0
+ default-router 10.11.50.253
+ option 150 ip 10.11.50.2
+ dns-server 8.8.8.8
+!
+spanning-tree mode pvst
+!
+interface FastEthernet0/0.40
+ encapsulation dot1Q 40
+ ip address 10.11.40.2 255.255.255.0
+ standby 4 ip 10.11.40.253
+ standby 4 track Serial0/0/1
+!
+interface FastEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 10.11.10.2 255.255.255.0
+ standby 1 ip 10.11.10.253
+ standby 1 track Serial0/0/1
+!
+interface FastEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 10.11.20.2 255.255.255.0
+ standby 2 ip 10.11.20.253
+ standby 2 track Serial0/0/1
+!
+interface FastEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 10.11.30.2 255.255.255.0
+ standby 3 ip 10.11.30.253
+ standby 3 track Serial0/0/1
+!
+interface FastEthernet0/1.50
+ encapsulation dot1Q 50
+ ip address 10.11.50.2 255.255.255.0
+ standby 5 ip 10.11.50.253
+ standby 5 track Serial0/0/1
+!
+interface Serial0/0/0
+ ip address 192.168.11.2 255.255.255.252
+!
+interface Serial0/0/1
+ ip address 192.168.11.5 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/1/0
+ ip address 192.168.11.17 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/1/1
+ ip address 192.168.11.22 255.255.255.252
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 100
+ log-adjacency-changes
+ passive-interface FastEthernet0/0
+ passive-interface FastEthernet0/1
+ network 192.168.11.4 0.0.0.3 area 0
+ network 192.168.11.0 0.0.0.3 area 0
+ network 10.11.10.0 0.0.0.255 area 0
+ network 10.11.20.0 0.0.0.255 area 0
+ network 10.11.30.0 0.0.0.255 area 0
+ network 10.11.40.0 0.0.0.255 area 0
+ network 10.11.50.0 0.0.0.255 area 0
+ network 192.168.11.16 0.0.0.3 area 0
+ network 192.168.11.20 0.0.0.3 area 0
+!
+ip route 10.11.10.0 255.255.255.0 192.168.11.1 
+ip route 10.11.20.0 255.255.255.0 192.168.11.1 
+ip route 10.11.30.0 255.255.255.0 192.168.11.1 
+ip route 10.11.40.0 255.255.255.0 192.168.11.1 
+ip route 10.11.50.0 255.255.255.0 192.168.11.1 
+!
+dial-peer voice 1 voip
+ destination-pattern 2..
+ session target ipv4:192.168.11.10
+!
+telephony-service
+ max-ephones 10
+ max-dn 10
+ ip source-address 10.11.50.1 port 2000
+ auto assign 1 to 10
+!
+ephone-dn 1
+ number 100
+!
+ephone-dn 2
+ number 101
+!
+ephone-dn 3
+ number 102
+!
+ephone-dn 4
+ number 103
+!
+ephone-dn 5
+ number 104
+!
+ephone-dn 6
+ number 105
+!
+ephone-dn 7
+ number 106
+!
+ephone-dn 8
+ number 107
+!
+ephone-dn 9
+ number 108
