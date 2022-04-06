@@ -1,0 +1,21 @@
+// Configuration from SWITCH 1
+
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree vlan 20 priority 24576
+spanning-tree vlan 10 priority 28672
+!
+interface FastEthernet0/1
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ switchport mode trunk
+!
+interface FastEthernet0/3
+ switchport mode trunk
+!
+interface FastEthernet0/4
+ switchport mode trunk
+!
+interface FastEthernet0/5
+ switchport mode trunk
