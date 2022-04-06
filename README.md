@@ -34,3 +34,9 @@ ANGRA:
 Tunnel 100:
 1. Encrypted;
 2. RIP Protocol.
+
+Cisco Equipment:
+1. Cisco 2811 Routers
+2. Cisco 2960-24TT Switches
+3. Cisco 7960 IP Phones
+4. Cisco WRT300N Wireless Router
