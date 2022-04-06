@@ -1,0 +1,68 @@
+// Configuration from Router 'ANGRA'
+
+crypto isakmp policy 10
+ encr aes 256
+ authentication pre-share
+ group 5
+ lifetime 3600
+!
+crypto isakmp key Passw0rd address 1.0.0.2
+!
+crypto ipsec transform-set TRANS ah-sha-hmac esp-aes 256 esp-sha-hmac
+!
+crypto map OMAPA 10 ipsec-isakmp 
+ set peer 1.0.0.2
+ set transform-set TRANS 
+ match address 100
+!
+interface Tunnel100
+ ip address 10.255.255.2 255.255.255.252
+ mtu 1476
+ tunnel source Serial0/0/0
+ tunnel destination 1.0.0.2
+!
+interface Serial0/0/0
+ ip address 1.0.0.6 255.255.255.252
+ ip nat outside
+ clock rate 2000000
+ crypto map OMAPA
+!
+interface Serial0/0/1
+ ip address 192.168.11.9 255.255.255.252
+ ip nat inside
+ clock rate 2000000
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 100
+ redistribute static 
+ passive-interface Serial0/0/0
+ network 192.168.11.8 0.0.0.3
+ no auto-summary
+!
+router rip
+ version 2
+ redistribute eigrp 100 metric 3 
+ network 10.0.0.0
+ no auto-summary
+!
+ip nat inside source list 1 interface Serial0/0/0 overload
+ip nat inside source static tcp 172.18.11.254 80 1.0.0.6 80 
+ip nat inside source static tcp 172.18.11.254 443 1.0.0.6 443 
+
+ip route 0.0.0.0 0.0.0.0 Serial0/0/0 
+!
+access-list 1 permit 192.168.11.8 0.0.0.3
+access-list 1 permit 192.168.11.12 0.0.0.3
+access-list 1 permit 172.18.11.0 0.0.0.255
+access-list 1 permit 172.17.11.0 0.0.0.255
+access-list 1 permit 172.16.11.0 0.0.0.255
+access-list 1 permit 172.19.11.0 0.0.0.255
+access-list 1 permit 172.20.11.0 0.0.0.255
+access-list 1 permit 10.255.255.0 0.0.0.3
+
+access-list 100 permit gre host 1.0.0.6 host 1.0.0.2
+access-list 100 permit tcp any any eq www
+access-list 100 permit tcp any any eq 443
