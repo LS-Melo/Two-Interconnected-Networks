@@ -1,0 +1,58 @@
+//Configuration from Router 'ANGRA1'
+
+ip dhcp excluded-address 172.17.11.1
+ip dhcp excluded-address 172.20.11.1
+!
+ip dhcp pool rede17
+ network 172.17.11.0 255.255.255.0
+ default-router 172.17.11.1
+ option 150 ip 192.168.11.13
+ dns-server 8.8.8.8
+ip dhcp pool VLAN50
+ network 172.20.11.0 255.255.255.0
+ default-router 172.20.11.1
+ option 150 ip 192.168.11.13
+ dns-server 8.8.8.8
+!
+interface FastEthernet0/0
+ ip address 172.16.11.1 255.255.255.0
+ duplex auto
+ speed auto
+!
+interface Serial0/0/0
+ ip address 192.168.11.10 255.255.255.252
+!
+interface Serial0/0/1
+ ip address 192.168.11.13 255.255.255.252
+ clock rate 2000000
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router eigrp 100
+ redistribute static 
+ passive-interface FastEthernet0/0
+ network 192.168.11.12 0.0.0.3
+ network 192.168.11.8 0.0.0.3
+ network 172.16.11.0 0.0.0.255
+ no auto-summary
+!
+ip route 172.17.11.0 255.255.255.0 192.168.11.14 
+ip route 172.20.11.0 255.255.255.0 192.168.11.14 
+!
+dial-peer voice 1 voip
+ destination-pattern 1..
+ session target ipv4:192.168.11.5
+!
+telephony-service
+ max-ephones 10
+ max-dn 10
+ ip source-address 192.168.11.13 port 2000
+ auto assign 1 to 10
+!
+ephone-dn 1
+ number 200
+!
+ephone-dn 2
+ number 201
