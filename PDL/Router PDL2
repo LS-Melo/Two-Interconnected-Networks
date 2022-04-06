@@ -1,0 +1,98 @@
+// Configuration from Router 'PDL2'
+
+interface FastEthernet0/0.40
+ encapsulation dot1Q 40
+ ip address 10.11.40.1 255.255.255.0
+ ip helper-address 192.168.11.2
+ ip nat inside
+ standby 4 ip 10.11.40.253
+ standby 4 priority 105
+ standby 4 preempt
+ standby 4 track Serial0/0/1
+!
+interface FastEthernet0/1.10
+ encapsulation dot1Q 10
+ ip address 10.11.10.1 255.255.255.0
+ ip helper-address 192.168.11.2
+ ip nat inside
+ standby 1 ip 10.11.10.253
+ standby 1 priority 105
+ standby 1 preempt
+ standby 1 track Serial0/0/1
+!
+interface FastEthernet0/1.20
+ encapsulation dot1Q 20
+ ip address 10.11.20.1 255.255.255.0
+ ip helper-address 192.168.11.2
+ ip nat inside
+ standby 2 ip 10.11.20.253
+ standby 2 priority 105
+ standby 2 preempt
+ standby 2 track Serial0/0/1
+!
+interface FastEthernet0/1.30
+ encapsulation dot1Q 30
+ ip address 10.11.30.1 255.255.255.0
+ ip helper-address 192.168.11.2
+ ip nat inside
+ standby 3 ip 10.11.30.253
+ standby 3 priority 105
+ standby 3 preempt
+ standby 3 track Serial0/0/1
+!
+interface FastEthernet0/1.50
+ encapsulation dot1Q 50
+ ip address 10.11.50.1 255.255.255.0
+ ip helper-address 192.168.11.2
+ ip nat inside
+ standby 5 ip 10.11.50.253
+ standby 5 priority 105
+ standby 5 preempt
+ standby 5 track Serial0/0/1
+!
+interface Serial0/0/0
+ ip address 192.168.11.1 255.255.255.252
+ clock rate 2000000
+!
+interface Serial0/0/1
+ ip address 1.0.0.10 255.255.255.252
+ ip nat outside
+ clock rate 2000000
+!
+interface Serial0/1/0
+ ip address 192.168.11.21 255.255.255.252
+ clock rate 2000000
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+router ospf 100
+ log-adjacency-changes
+ passive-interface FastEthernet0/0
+ passive-interface FastEthernet0/1
+ network 192.168.11.0 0.0.0.3 area 0
+ network 10.11.10.0 0.0.0.255 area 0
+ network 10.11.20.0 0.0.0.255 area 0
+ network 10.11.30.0 0.0.0.255 area 0
+ network 10.11.40.0 0.0.0.255 area 0
+ network 10.11.50.0 0.0.0.255 area 0
+ network 1.0.0.8 0.0.0.3 area 0
+ network 192.168.11.20 0.0.0.3 area 0
+!
+ip nat inside source list 1 interface Serial0/0/1 overload
+ip nat inside source static tcp 10.11.40.254 80 1.0.0.10 80 
+
+ip route 192.168.11.4 255.255.255.252 192.168.11.2 
+ip route 0.0.0.0 0.0.0.0 Serial0/0/0 
+ip route 0.0.0.0 0.0.0.0 Serial0/0/1 120
+!
+access-list 1 permit 10.11.10.0 0.0.0.255
+access-list 1 permit 10.11.20.0 0.0.0.255
+access-list 1 permit 10.11.30.0 0.0.0.255
+access-list 1 permit 10.11.40.0 0.0.0.255
+access-list 1 permit 10.11.50.0 0.0.0.255
+access-list 1 permit 192.168.0.0 0.0.255.255
+
+access-list 100 permit tcp any any eq www
+access-list 100 permit ip any 1.0.0.8 0.0.0.3
